@@ -32,6 +32,8 @@ pipeline:
             enabled: false
             paths: []
         description: ""
+        delegateSelectors:
+          - docker-delegate
   properties:
     ci:
       codebase:
