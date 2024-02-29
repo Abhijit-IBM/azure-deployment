@@ -5,7 +5,7 @@ pipeline:
   orgIdentifier: default
   stages:
     - stage:
-        name: Build
+        name: SCM Checkout
         identifier: Build
         type: CI
         spec:
@@ -18,13 +18,19 @@ pipeline:
                   identifier: Echo_Welcome_Message
                   spec:
                     shell: Sh
-                    command: echo "Welcome to Harness CI"
+                    command: |-
+                      echo "Welcome to Harness CI"
+                      ls -ltr
           platform:
             os: Linux
             arch: Amd64
           runtime:
-            type: Cloud
+            type: Docker
             spec: {}
+          caching:
+            enabled: false
+            paths: []
+        description: ""
   properties:
     ci:
       codebase:
