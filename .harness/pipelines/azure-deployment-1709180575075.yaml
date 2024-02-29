@@ -19,7 +19,7 @@ pipeline:
                   spec:
                     connectorRef: account.harnessImage
                     image: hashicorp/terraform:latest
-                    shell: Bash
+                    shell: Sh
                     command: |
                       # cd terraform
                       # terraform --version
@@ -35,7 +35,7 @@ pipeline:
                   spec:
                     connectorRef: account.harnessImage
                     image: hashicorp/terraform:latest
-                    shell: Bash
+                    shell: Sh
                     command: |-
                       # cd terraform
                       # terraform plan
