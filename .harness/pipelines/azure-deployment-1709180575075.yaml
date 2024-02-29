@@ -38,6 +38,11 @@ pipeline:
                     command: |-
                       cd terraform
                       terraform plan
+                    envVariables:
+                      ARM_SUBSCRIPTION_ID: 64eb0097-f3d0-45d2-a9fd-cf90f5b28ad5
+                      ARM_TENANT_ID: ""
+                      ARM_CLIENT_ID: ""
+                      " ARM_CLIENT_SECRET": ""
                     imagePullPolicy: IfNotPresent
                     runAsUser: "0"
           platform:
