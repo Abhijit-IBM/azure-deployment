@@ -22,7 +22,7 @@ pipeline:
                       echo "Welcome to Harness CI"
                       ls -ltr
           platform:
-            os: Windows
+            os: Linux
             arch: Amd64
           runtime:
             type: Cloud
