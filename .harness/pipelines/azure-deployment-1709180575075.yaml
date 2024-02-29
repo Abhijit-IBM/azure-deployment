@@ -5,7 +5,7 @@ pipeline:
   orgIdentifier: default
   stages:
     - stage:
-        name: Run Bash
+        name: Provision Resources
         identifier: Build
         type: CI
         spec:
@@ -14,13 +14,14 @@ pipeline:
             steps:
               - step:
                   type: Run
-                  name: Echo Welcome Message
+                  name: Terraform Plan
                   identifier: Echo_Welcome_Message
                   spec:
                     shell: Sh
                     command: |-
-                      echo "Welcome to Harness CI"
-                      ls -ltr
+                      cd terraform
+                      terraform --version
+                      terraform plan
           platform:
             os: Linux
             arch: Amd64
