@@ -14,13 +14,22 @@ pipeline:
             steps:
               - step:
                   type: Run
-                  name: Terraform Plan
+                  name: Terraform Init
                   identifier: Echo_Welcome_Message
                   spec:
                     shell: Sh
                     command: |-
                       cd terraform
                       terraform --version
+                      terraform init
+              - step:
+                  type: Run
+                  name: Terraform Plan
+                  identifier: Terraform_Plan
+                  spec:
+                    shell: Sh
+                    command: |-
+                      cd terraform
                       terraform plan
           platform:
             os: Linux
