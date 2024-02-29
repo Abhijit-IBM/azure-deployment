@@ -17,20 +17,29 @@ pipeline:
                   name: Terraform Init
                   identifier: Echo_Welcome_Message
                   spec:
+                    connectorRef: account.harnessImage
+                    image: hashicorp/terraform:latest
                     shell: Sh
                     command: |-
                       cd terraform
                       terraform --version
                       terraform init
+                    envVariables: <+input>
+                    imagePullPolicy: IfNotPresent
+                    runAsUser: "0"
               - step:
                   type: Run
                   name: Terraform Plan
                   identifier: Terraform_Plan
                   spec:
+                    connectorRef: account.harnessImage
+                    image: hashicorp/terraform:latest
                     shell: Sh
                     command: |-
                       cd terraform
                       terraform plan
+                    imagePullPolicy: IfNotPresent
+                    runAsUser: "0"
           platform:
             os: Linux
             arch: Amd64
