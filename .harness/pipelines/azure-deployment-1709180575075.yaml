@@ -19,11 +19,12 @@ pipeline:
                   spec:
                     connectorRef: account.harnessImage
                     image: hashicorp/terraform:latest
-                    shell: Sh
-                    command: |-
-                      cd terraform
-                      terraform --version
-                      terraform init
+                    shell: Bash
+                    command: |
+                      # cd terraform
+                      # terraform --version
+                      # terraform init
+                      touch temp
                     envVariables: <+input>
                     imagePullPolicy: IfNotPresent
                     runAsUser: "0"
@@ -34,10 +35,11 @@ pipeline:
                   spec:
                     connectorRef: account.harnessImage
                     image: hashicorp/terraform:latest
-                    shell: Sh
+                    shell: Bash
                     command: |-
-                      cd terraform
-                      terraform plan
+                      # cd terraform
+                      # terraform plan
+                      ls -ltr
                     envVariables:
                       ARM_SUBSCRIPTION_ID: 64eb0097-f3d0-45d2-a9fd-cf90f5b28ad5
                       ARM_TENANT_ID: ""
