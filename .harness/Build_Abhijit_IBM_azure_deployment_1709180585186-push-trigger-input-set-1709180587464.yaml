@@ -1,0 +1,14 @@
+inputSet:
+  name: Build_Abhijit_IBM_azure_deployment_1709180585186-push-trigger-input-set
+  identifier: Build_Abhijit_IBM_azure_deployment_1709180585186pushtriggerinputset
+  orgIdentifier: default
+  projectIdentifier: Azure_Deployment
+  pipeline:
+    identifier: Build_Abhijit_IBM_azure_deployment_1709180585186
+    properties:
+      ci:
+        codebase:
+          build:
+            type: branch
+            spec:
+              branch: <+trigger.branch>
