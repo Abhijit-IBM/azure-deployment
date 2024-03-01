@@ -35,8 +35,8 @@ pipeline:
                     image: hashicorp/terraform:latest
                     shell: Sh
                     command: |-
-                      # cd terraform
-                      # terraform plan
+                      cd terraform
+                      terraform plan
                       # echo ${secrets.getValue("azure-login")}
                     envVariables:
                       ARM_SUBSCRIPTION_ID: <+input>
