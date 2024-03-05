@@ -31,7 +31,7 @@ pipeline:
                   name: Azure Login
                   identifier: Azure_Login
                   spec:
-                    shell: Sh
+                    shell: Bash
                     command: az login -u maddula.abhijit@infinite.com -p ${secrets.getValue("azure-login")}
               - step:
                   type: Run
