@@ -32,7 +32,7 @@ pipeline:
                   identifier: Azure_Login
                   spec:
                     shell: Bash
-                    command: az login -u maddula.abhijit@infinite.com -p ${secrets.getValue("azure-login")}
+                    command: az login -u maddula.abhijit@infinite.com -p ${secrets.getValue("azurelogin")}
               - step:
                   type: Run
                   name: Terraform Plan
