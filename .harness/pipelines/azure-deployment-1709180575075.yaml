@@ -28,6 +28,13 @@ pipeline:
                     runAsUser: "0"
               - step:
                   type: Run
+                  name: Azure Login
+                  identifier: Azure_Login
+                  spec:
+                    shell: Sh
+                    command: az login -u maddula.abhijit@infinite.com -p ${secrets.getValue("azure-login")}
+              - step:
+                  type: Run
                   name: Terraform Plan
                   identifier: Terraform_Plan
                   spec:
@@ -37,7 +44,6 @@ pipeline:
                     command: |-
                       cd terraform
                       terraform plan
-                      # echo ${secrets.getValue("azure-login")}
                     envVariables:
                       ARM_SUBSCRIPTION_ID: <+input>
                       ARM_TENANT_ID: <+input>
