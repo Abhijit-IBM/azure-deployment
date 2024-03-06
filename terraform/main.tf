@@ -1,5 +1,3 @@
-# Note: We can either add a Internet gateway or Private network gateway
-
 provider "azurerm" {
     features {}
     skip_provider_registration = true
@@ -15,57 +13,57 @@ resource "azurerm_resource_group" "rg" {
     location = "${var.region}"
 }
 
-# resource "azurerm_network_security_group" "this" {
-#   name = "${var.prefix}-secuirty-group"
-#   location            = "${var.region}"
-#   resource_group_name = azurerm_resource_group.rg.name
+resource "random_id" "this" {
+    byte_length = 2
+}
 
-#   security_rule = [{
-#     name                       = "ssh"
-#     priority                   = 100
-#     direction                  = "Inbound"
-#     access                     = "Allow"
-#     protocol                   = "Tcp"
-#     source_port_range          = "22"
-#     destination_port_range     = "22"
-#   },
-#   {
-#     name                       = "http"
-#     priority                   = 100
-#     direction                  = "Inbound"
-#     access                     = "Allow"
-#     protocol                   = "Tcp"
-#     source_port_range          = "80"
-#     destination_port_range     = "80"
-#   }]
+# Create Network Security Group and rules
+resource "azurerm_network_security_group" "rdp" {
+  name                = "${var.prefix}-nsg-${random_id.this.hex}"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
 
-#   tags = {
-#     environment = "Production"
-#   }
-# }
+  security_rule {
+    name                       = "Allow_RDP"
+    priority                   = 1000
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = 3389
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
 
 resource "azurerm_virtual_network" "vpc" {
     name = "${var.prefix}-vpn"
     location = "${var.region}"
     resource_group_name = azurerm_resource_group.rg.name
-    address_space = ["10.0.0.0/16"]
+    address_space = var.vpc_address_space
 }
 
 resource "azurerm_subnet" "subnet1" {
     name = "${var.prefix}-subnet-1"
     resource_group_name = azurerm_resource_group.rg.name
     virtual_network_name = azurerm_virtual_network.vpc.name
-    address_prefixes = ["10.0.2.0/24"]
+    address_prefixes = var.subnet_address_space
+}
+
+resource "azurerm_subnet_network_security_group_association" "this" {
+    subnet_id = azurerm_subnet.subnet1.id
+    network_security_group_id = azurerm_network_security_group.rdp.id
 }
 
 resource "azurerm_network_interface" "nic" {
     name = "${var.prefix}-nic"
-    location = "${var.region}"
+    location = var.region
     resource_group_name = azurerm_resource_group.rg.name
     ip_configuration {
         name = "configuration1"
         subnet_id = azurerm_subnet.subnet1.id
         private_ip_address_allocation = "Dynamic"
+        public_ip_address_id = azurerm_public_ip.this.id
     }
 }
 
@@ -76,16 +74,16 @@ resource "azurerm_public_ip" "this" {
     allocation_method = "Static"
 }
 
-resource "azurerm_lb" "this" {
-    name = "${var.prefix}-lb"
-    location = azurerm_resource_group.rg.location
-    resource_group_name = azurerm_resource_group.rg.name
+# resource "azurerm_lb" "this" {
+#     name = "${var.prefix}-lb"
+#     location = azurerm_resource_group.rg.location
+#     resource_group_name = azurerm_resource_group.rg.name
 
-    frontend_ip_configuration {
-      name = "PublicIPAddress"
-      public_ip_address_id = azurerm_public_ip.this.id
-    }
-}
+#     frontend_ip_configuration {
+#       name = "PublicIPAddress"
+#       public_ip_address_id = azurerm_public_ip.this.id
+#     }
+# }
 
 resource "tls_private_key" "insecure" {
     algorithm = "ED25519"
@@ -95,21 +93,23 @@ locals {
     ssh_key_public = sensitive(tls_private_key.insecure.public_key_openssh)
 }
 
+# Create linux virtual machine
 resource "azurerm_linux_virtual_machine" "vm1" {
     name = "${var.prefix}-vm1"
     resource_group_name = azurerm_resource_group.rg.name
     location = "${var.region}"
     size = "Standard_F2"
     admin_username = "tfadmin"
+    admin_password = var.admin_password
 
     network_interface_ids = [
         azurerm_network_interface.nic.id
     ]
 
-    admin_ssh_key {
-        username = "tfadmin"
-        public_key = local.ssh_key_public
-    }
+    # admin_ssh_key {
+    #     username = "tfadmin"
+    #     public_key = local.ssh_key_public
+    # }
 
     os_disk {
         caching = "ReadWrite"
@@ -124,9 +124,33 @@ resource "azurerm_linux_virtual_machine" "vm1" {
     }
 
     tags = {
-        name = "Prod"
+        name = "Production"
     }
 }
+
+# Create windows virtual machine
+# resource "azurerm_windows_virtual_machine" "main" {
+#   name                  = "${var.prefix}-vm"
+#   admin_username        = "tfadmin"
+#   admin_password        = var.admin_password
+#   location              = azurerm_resource_group.rg.location
+#   resource_group_name   = azurerm_resource_group.rg.name
+#   network_interface_ids = [azurerm_network_interface.my_terraform_nic.id]
+#   size                  = "Standard_DS1_v2"
+
+#   os_disk {
+#     name                 = "myOsDisk"
+#     caching              = "ReadWrite"
+#     storage_account_type = "Premium_LRS"
+#   }
+
+#   source_image_reference {
+#     publisher = "MicrosoftWindowsServer"
+#     offer     = "WindowsServer"
+#     sku       = "2019-datacenter-azure-edition"
+#     version   = "latest"
+#   }
+# }
 
 resource "azurerm_managed_disk" "volume1" {
   name                 = "${var.prefix}-volume1"
