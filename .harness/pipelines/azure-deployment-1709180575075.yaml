@@ -24,8 +24,6 @@ pipeline:
                       cd terraform
                       terraform --version
                       terraform init
-                    envVariables:
-                      VM_PASS: <+secrets.getValue("azurelogin")>
                     imagePullPolicy: IfNotPresent
                     runAsUser: "0"
               - step:
@@ -44,8 +42,6 @@ pipeline:
                     command: |-
                       cd terraform
                       terraform plan
-                    envVariables:
-                      VM_PASS: <+secrets.getValue("azurelogin")>
               - step:
                   type: Run
                   name: Terraform Apply
@@ -55,8 +51,6 @@ pipeline:
                     command: |-
                       cd terraform
                       terraform apply -auto-approve
-                    envVariables:
-                      VM_PASS: <+secrets.getValue("azurelogin")>
               - step:
                   type: Run
                   name: Terraform Destroy
@@ -66,6 +60,8 @@ pipeline:
                     command: |-
                       cd terraform
                       terraform destroy -auto-approve
+                  when:
+                    stageStatus: All
           platform:
             os: Linux
             arch: Amd64
