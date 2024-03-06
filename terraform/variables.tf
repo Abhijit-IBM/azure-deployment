@@ -13,7 +13,3 @@ variable "vpc_address_space" {
 variable "subnet_address_space" {
     default = ["10.0.2.0/24"]
 }
-
-variable "admin_password" {
-    default = "${env.VM_PASS}"
-}
