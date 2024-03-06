@@ -24,6 +24,8 @@ pipeline:
                       cd terraform
                       terraform --version
                       terraform init
+                    envVariables:
+                      VM_PASS: <+secrets.getValue("azurelogin")>
                     imagePullPolicy: IfNotPresent
                     runAsUser: "0"
               - step:
