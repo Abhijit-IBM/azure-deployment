@@ -38,19 +38,10 @@ pipeline:
                   name: Terraform Plan
                   identifier: Terraform_Plan
                   spec:
-                    connectorRef: account.harnessImage
-                    image: hashicorp/terraform:latest
-                    shell: Sh
+                    shell: Bash
                     command: |-
                       cd terraform
                       terraform plan
-                    envVariables:
-                      ARM_SUBSCRIPTION_ID: <+input>
-                      ARM_TENANT_ID: <+input>
-                      ARM_CLIENT_ID: <+input>
-                      ARM_CLIENT_SECRET: <+input>
-                    imagePullPolicy: IfNotPresent
-                    runAsUser: "0"
           platform:
             os: Linux
             arch: Amd64
