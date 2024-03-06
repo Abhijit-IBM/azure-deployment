@@ -93,6 +93,15 @@ resource "azurerm_public_ip" "this" {
 #     ssh_key_public = sensitive(tls_private_key.insecure.public_key_openssh)
 # }
 
+resource "random_password" "admin_password" {
+  length      = 24
+  min_lower   = 1
+  min_upper   = 1
+  min_numeric = 1
+  min_special = 1
+  special     = true
+}
+
 # Create linux virtual machine
 resource "azurerm_linux_virtual_machine" "vm1" {
     name = "${var.prefix}-vm1"
@@ -100,7 +109,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
     location = "${var.region}"
     size = "Standard_F2"
     admin_username = "tfadmin"
-    admin_password = var.admin_password
+    admin_password = random_password.admin_password.result
 
     network_interface_ids = [
         azurerm_network_interface.nic.id
