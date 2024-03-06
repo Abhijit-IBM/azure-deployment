@@ -6,5 +6,5 @@
 
 output "admin_password" {
   sensitive = true
-  value     = azurerm_windows_virtual_machine.main.admin_password
+  value     = azurerm_linux_virtual_machine.vm1.admin_password
 }
