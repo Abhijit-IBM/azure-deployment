@@ -52,7 +52,9 @@ pipeline:
                   identifier: Terraform_Apply
                   spec:
                     shell: Sh
-                    command: terraform apply -auto-approve
+                    command: |-
+                      cd terraform
+                      terraform apply -auto-approve
                     envVariables:
                       VM_PASS: <+secrets.getValue("azurelogin")>
               - step:
@@ -61,7 +63,9 @@ pipeline:
                   identifier: Terraform_Destroy
                   spec:
                     shell: Sh
-                    command: terraform destroy -auto-approve
+                    command: |-
+                      cd terraform
+                      terraform destroy -auto-approve
           platform:
             os: Linux
             arch: Amd64
