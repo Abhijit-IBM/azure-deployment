@@ -42,6 +42,24 @@ pipeline:
                     command: |-
                       cd terraform
                       terraform plan
+                    envVariables:
+                      VM_PASS: <+secrets.getValue("azurelogin")>
+              - step:
+                  type: Run
+                  name: Terraform Apply
+                  identifier: Terraform_Apply
+                  spec:
+                    shell: Sh
+                    command: terraform apply -auto-approve
+                    envVariables:
+                      VM_PASS: <+secrets.getValue("azurelogin")>
+              - step:
+                  type: Run
+                  name: Terraform Destroy
+                  identifier: Terraform_Destroy
+                  spec:
+                    shell: Sh
+                    command: terraform destroy -auto-approve
           platform:
             os: Linux
             arch: Amd64
