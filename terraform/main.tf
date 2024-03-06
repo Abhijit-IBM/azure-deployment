@@ -85,13 +85,13 @@ resource "azurerm_public_ip" "this" {
 #     }
 # }
 
-resource "tls_private_key" "insecure" {
-    algorithm = "ED25519"
-}
+# resource "tls_private_key" "insecure" {
+#     algorithm = "RSA"
+# }
 
-locals {
-    ssh_key_public = sensitive(tls_private_key.insecure.public_key_openssh)
-}
+# locals {
+#     ssh_key_public = sensitive(tls_private_key.insecure.public_key_openssh)
+# }
 
 # Create linux virtual machine
 resource "azurerm_linux_virtual_machine" "vm1" {
