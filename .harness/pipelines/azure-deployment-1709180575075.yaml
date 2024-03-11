@@ -17,8 +17,8 @@ pipeline:
                   name: Terraform Init
                   identifier: Echo_Welcome_Message
                   spec:
-                    connectorRef: account.harnessImage
-                    image: hashicorp/terraform:latest
+                    connectorRef: maddulainfinite
+                    image: maddulainfinite/dev-env:1.0.2
                     shell: Sh
                     command: |-
                       cd terraform
@@ -31,35 +31,47 @@ pipeline:
                   name: Azure Login
                   identifier: Azure_Login
                   spec:
+                    connectorRef: maddulainfinite
+                    image: maddulainfinite/dev-env:1.0.2
                     shell: Bash
                     command: az login
+                    imagePullPolicy: IfNotPresent
               - step:
                   type: Run
                   name: Terraform Plan
                   identifier: Terraform_Plan
                   spec:
+                    connectorRef: maddulainfinite
+                    image: maddulainfinite/dev-env:1.0.2
                     shell: Bash
                     command: |-
                       cd terraform
                       terraform plan
+                    imagePullPolicy: IfNotPresent
               - step:
                   type: Run
                   name: Terraform Apply
                   identifier: Terraform_Apply
                   spec:
+                    connectorRef: maddulainfinite
+                    image: maddulainfinite/dev-env:1.0.2
                     shell: Sh
                     command: |-
                       cd terraform
                       terraform apply -auto-approve
+                    imagePullPolicy: IfNotPresent
               - step:
                   type: Run
                   name: Terraform Destroy
                   identifier: Terraform_Destroy
                   spec:
+                    connectorRef: maddulainfinite
+                    image: maddulainfinite/dev-env:1.0.2
                     shell: Sh
                     command: |-
                       cd terraform
                       terraform destroy -auto-approve
+                    imagePullPolicy: IfNotPresent
                   when:
                     stageStatus: All
           platform:
