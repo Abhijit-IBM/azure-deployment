@@ -5,6 +5,5 @@
 # }
 
 output "admin_password" {
-  sensitive = true
   value     = azurerm_linux_virtual_machine.vm1.admin_password
 }

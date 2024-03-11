@@ -63,16 +63,16 @@ resource "azurerm_network_interface" "nic" {
         name = "configuration1"
         subnet_id = azurerm_subnet.subnet1.id
         private_ip_address_allocation = "Dynamic"
-        public_ip_address_id = azurerm_public_ip.this.id
+        # public_ip_address_id = azurerm_public_ip.this.id
     }
 }
 
-resource "azurerm_public_ip" "this" {
-    name = "${var.prefix}-fip"
-    location = azurerm_resource_group.rg.location
-    resource_group_name = azurerm_resource_group.rg.name
-    allocation_method = "Static"
-}
+# resource "azurerm_public_ip" "this" {
+#     name = "${var.prefix}-fip"
+#     location = azurerm_resource_group.rg.location
+#     resource_group_name = azurerm_resource_group.rg.name
+#     allocation_method = "Static"
+# }
 
 # resource "azurerm_lb" "this" {
 #     name = "${var.prefix}-lb"
@@ -103,78 +103,82 @@ resource "random_password" "admin_password" {
 }
 
 # Create linux virtual machine
-resource "azurerm_linux_virtual_machine" "vm1" {
-    name = "${var.prefix}-vm1"
-    resource_group_name = azurerm_resource_group.rg.name
-    location = "${var.region}"
-    size = "Standard_F2"
-    admin_username = "tfadmin"
-    admin_password = random_password.admin_password.result
-    disable_password_authentication = false
+# resource "azurerm_linux_virtual_machine" "vm1" {
+#     name = "${var.prefix}-vm1"
+#     resource_group_name = azurerm_resource_group.rg.name
+#     location = "${var.region}"
+#     size = "Standard_F2"
+#     admin_username = "tfadmin"
+#     admin_password = random_password.admin_password.result
+#     disable_password_authentication = false
 
-    network_interface_ids = [
-        azurerm_network_interface.nic.id
-    ]
+#     network_interface_ids = [
+#         azurerm_network_interface.nic.id
+#     ]
 
-    # admin_ssh_key {
-    #     username = "tfadmin"
-    #     public_key = local.ssh_key_public
-    # }
+#     # admin_ssh_key {
+#     #     username = "tfadmin"
+#     #     public_key = local.ssh_key_public
+#     # }
 
-    os_disk {
-        caching = "ReadWrite"
-        storage_account_type = "Standard_LRS"
-    }
+#     os_disk {
+#         caching = "ReadWrite"
+#         storage_account_type = "Standard_LRS"
+#     }
 
-    source_image_reference {
-        publisher = "Canonical"
-        offer     = "0001-com-ubuntu-server-jammy"
-        sku       = "22_04-lts"
-        version   = "latest"
-    }
+#     source_image_reference {
+#         publisher = "Canonical"
+#         offer     = "0001-com-ubuntu-server-jammy"
+#         sku       = "22_04-lts"
+#         version   = "latest"
+#     }
 
-    tags = {
-        name = "Production"
-    }
-}
-
-# Create windows virtual machine
-# resource "azurerm_windows_virtual_machine" "main" {
-#   name                  = "${var.prefix}-vm"
-#   admin_username        = "tfadmin"
-#   admin_password        = var.admin_password
-#   location              = azurerm_resource_group.rg.location
-#   resource_group_name   = azurerm_resource_group.rg.name
-#   network_interface_ids = [azurerm_network_interface.my_terraform_nic.id]
-#   size                  = "Standard_DS1_v2"
-
-#   os_disk {
-#     name                 = "myOsDisk"
-#     caching              = "ReadWrite"
-#     storage_account_type = "Premium_LRS"
-#   }
-
-#   source_image_reference {
-#     publisher = "MicrosoftWindowsServer"
-#     offer     = "WindowsServer"
-#     sku       = "2019-datacenter-azure-edition"
-#     version   = "latest"
-#   }
+#     tags = {
+#         name = "Production"
+#     }
 # }
 
-resource "azurerm_managed_disk" "volume1" {
-  name                 = "${var.prefix}-volume1"
-  location             = "${var.region}"
-  resource_group_name  = azurerm_resource_group.rg.name
-  storage_account_type = "Standard_LRS"
-  create_option        = "Empty"
-  disk_size_gb         = 2
+# Create windows virtual machine
+resource "azurerm_windows_virtual_machine" "main" {
+  name                  = "${var.prefix}-vm"
+  admin_username        = "tfadmin"
+  location              = azurerm_resource_group.rg.location
+  resource_group_name   = azurerm_resource_group.rg.name
+  network_interface_ids = [azurerm_network_interface.nic.id]
+  size                  = "Standard_DS1_v2"
+
+  admin_ssh_key {
+    username = "tfadmin"
+    public_key = "~/.ssh/id_rsa"
+  }
+
+  os_disk {
+    name                 = "myOsDisk"
+    caching              = "ReadWrite"
+    storage_account_type = "Premium_LRS"
+  }
+
+  source_image_reference {
+    publisher = "MicrosoftWindowsServer"
+    offer     = "WindowsServer"
+    sku       = "2019-datacenter-azure-edition"
+    version   = "latest"
+  }
 }
 
+# resource "azurerm_managed_disk" "volume1" {
+#   name                 = "${var.prefix}-volume1"
+#   location             = "${var.region}"
+#   resource_group_name  = azurerm_resource_group.rg.name
+#   storage_account_type = "Standard_LRS"
+#   create_option        = "Empty"
+#   disk_size_gb         = 2
+# }
 
-resource "azurerm_virtual_machine_data_disk_attachment" "this" {
-  managed_disk_id    = azurerm_managed_disk.volume1.id
-  virtual_machine_id = azurerm_linux_virtual_machine.vm1.id
-  lun                ="2"
-  caching            = "ReadWrite"
-}
+
+# resource "azurerm_virtual_machine_data_disk_attachment" "this" {
+#   managed_disk_id    = azurerm_managed_disk.volume1.id
+#   virtual_machine_id = azurerm_linux_virtual_machine.vm1.id
+#   lun                ="2"
+#   caching            = "ReadWrite"
+# }
