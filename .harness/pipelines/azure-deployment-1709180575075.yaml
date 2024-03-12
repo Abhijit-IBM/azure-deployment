@@ -73,7 +73,7 @@ pipeline:
                       terraform destroy -auto-approve
                     imagePullPolicy: IfNotPresent
                   when:
-                    stageStatus: All
+                    stageStatus: Failure
           platform:
             os: Linux
             arch: Amd64
