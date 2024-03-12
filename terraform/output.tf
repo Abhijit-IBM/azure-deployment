@@ -4,6 +4,6 @@
 #     sensitive = true
 # }
 
-output "admin_password" {
-  value     = azurerm_linux_virtual_machine.vm1.admin_password
-}
+# output "admin_password" {
+#   value     = azurerm_linux_virtual_machine.vm1.admin_password
+# }
