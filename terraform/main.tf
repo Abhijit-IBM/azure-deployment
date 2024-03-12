@@ -36,6 +36,24 @@ resource "azurerm_network_security_group" "rdp" {
   }
 }
 
+resource "azurerm_network_security_group" "ssh" {
+  name                = "${var.prefix}-nsg-${random_id.this.hex}"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  security_rule {
+    name                       = "Allow_ssh"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = 22
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
 resource "azurerm_virtual_network" "vpc" {
     name = "${var.prefix}-vpn"
     location = "${var.region}"
@@ -54,6 +72,12 @@ resource "azurerm_subnet_network_security_group_association" "this" {
     subnet_id = azurerm_subnet.subnet1.id
     network_security_group_id = azurerm_network_security_group.rdp.id
 }
+
+resource "azurerm_subnet_network_security_group_association" "this" {
+    subnet_id = azurerm_subnet.subnet1.id
+    network_security_group_id = azurerm_network_security_group.ssh.id
+}
+
 
 resource "azurerm_network_interface" "nic" {
     name = "${var.prefix}-nic"
@@ -103,54 +127,50 @@ resource "random_password" "admin_password" {
 }
 
 # Create linux virtual machine
-# resource "azurerm_linux_virtual_machine" "vm1" {
-#     name = "${var.prefix}-vm1"
-#     resource_group_name = azurerm_resource_group.rg.name
-#     location = "${var.region}"
-#     size = "Standard_F2"
-#     admin_username = "tfadmin"
-#     admin_password = random_password.admin_password.result
-#     disable_password_authentication = false
+resource "azurerm_linux_virtual_machine" "vm1" {
+    name = "${var.prefix}-vm1"
+    resource_group_name = azurerm_resource_group.rg.name
+    location = "${var.region}"
+    size = "Standard_F2"
+    admin_username = "tfadmin"
+    # admin_password = random_password.admin_password.result
+    disable_password_authentication = true
 
-#     network_interface_ids = [
-#         azurerm_network_interface.nic.id
-#     ]
+    network_interface_ids = [
+        azurerm_network_interface.nic.id
+    ]
 
-#     # admin_ssh_key {
-#     #     username = "tfadmin"
-#     #     public_key = local.ssh_key_public
-#     # }
+    admin_ssh_key {
+        username = "tfadmin"
+        public_key = file("~/.ssh/id_rsa.public")
+    }
 
-#     os_disk {
-#         caching = "ReadWrite"
-#         storage_account_type = "Standard_LRS"
-#     }
+    os_disk {
+        caching = "ReadWrite"
+        storage_account_type = "Standard_LRS"
+    }
 
-#     source_image_reference {
-#         publisher = "Canonical"
-#         offer     = "0001-com-ubuntu-server-jammy"
-#         sku       = "22_04-lts"
-#         version   = "latest"
-#     }
+    source_image_reference {
+        publisher = "Canonical"
+        offer     = "0001-com-ubuntu-server-jammy"
+        sku       = "22_04-lts"
+        version   = "latest"
+    }
 
-#     tags = {
-#         name = "Production"
-#     }
-# }
+    tags = {
+        name = "Production"
+    }
+}
 
 # Create windows virtual machine
 resource "azurerm_windows_virtual_machine" "main" {
   name                  = "${var.prefix}-vm"
   admin_username        = "tfadmin"
+  admin_password        = random_password.admin_password.result
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
   size                  = "Standard_DS1_v2"
-
-  admin_ssh_key {
-    username = "tfadmin"
-    public_key = "~/.ssh/id_rsa"
-  }
 
   os_disk {
     name                 = "myOsDisk"
