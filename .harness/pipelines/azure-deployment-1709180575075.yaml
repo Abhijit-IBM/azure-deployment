@@ -36,6 +36,7 @@ pipeline:
                     shell: Bash
                     command: |-
                       az login
+                      cd terraform
                       terraform plan
                       terraform apply -auto-approve
                     imagePullPolicy: IfNotPresent
