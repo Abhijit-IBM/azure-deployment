@@ -131,7 +131,7 @@ resource "azurerm_linux_virtual_machine" "vm1" {
 
     admin_ssh_key {
         username = "tfadmin"
-        public_key = file("~/.ssh/id_rsa.public")
+        public_key = file("~/.ssh/id_rsa.pub")
     }
 
     os_disk {
