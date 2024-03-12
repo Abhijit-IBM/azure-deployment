@@ -55,7 +55,7 @@ pipeline:
                   spec:
                     connectorRef: maddulainfinite
                     image: maddulainfinite/dev-env:1.0.2
-                    shell: Sh
+                    shell: Bash
                     command: |-
                       cd terraform
                       terraform apply -auto-approve
@@ -67,7 +67,7 @@ pipeline:
                   spec:
                     connectorRef: maddulainfinite
                     image: maddulainfinite/dev-env:1.0.2
-                    shell: Sh
+                    shell: Bash
                     command: |-
                       cd terraform
                       terraform destroy -auto-approve
@@ -76,7 +76,7 @@ pipeline:
                     stageStatus: Failure
           platform:
             os: Linux
-            arch: Amd64
+            arch: Arm64
           runtime:
             type: Cloud
             spec: {}
