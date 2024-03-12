@@ -47,7 +47,7 @@ pipeline:
                     command: |-
                       cd terraform
                       terraform plan
-                    imagePullPolicy: IfNotPresent
+                    imagePullPolicy: Never
               - step:
                   type: Run
                   name: Terraform Apply
@@ -59,7 +59,7 @@ pipeline:
                     command: |-
                       cd terraform
                       terraform apply -auto-approve
-                    imagePullPolicy: IfNotPresent
+                    imagePullPolicy: Never
               - step:
                   type: Run
                   name: Terraform Destroy
@@ -71,7 +71,7 @@ pipeline:
                     command: |-
                       cd terraform
                       terraform destroy -auto-approve
-                    imagePullPolicy: IfNotPresent
+                    imagePullPolicy: Never
                   when:
                     stageStatus: Failure
           platform:
