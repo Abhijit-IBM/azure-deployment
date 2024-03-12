@@ -28,7 +28,7 @@ pipeline:
                     runAsUser: "0"
               - step:
                   type: Run
-                  name: Azure Login
+                  name: Terraform Plan and Apply
                   identifier: Azure_Login
                   spec:
                     connectorRef: maddulainfinite
