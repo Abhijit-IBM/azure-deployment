@@ -18,25 +18,7 @@ resource "random_id" "this" {
 }
 
 # Create Network Security Group and rules
-resource "azurerm_network_security_group" "rdp" {
-  name                = "${var.prefix}-nsg-${random_id.this.hex}"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-
-  security_rule {
-    name                       = "Allow_RDP"
-    priority                   = 1000
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "*"
-    source_port_range          = "*"
-    destination_port_range     = 3389
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
-}
-
-resource "azurerm_network_security_group" "ssh" {
+resource "azurerm_network_security_group" "ssh_rdp" {
   name                = "${var.prefix}-nsg-${random_id.this.hex}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
@@ -49,6 +31,18 @@ resource "azurerm_network_security_group" "ssh" {
     protocol                   = "*"
     source_port_range          = "*"
     destination_port_range     = 22
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "Allow_RDP"
+    priority                   = 1000
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = 3389
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
@@ -70,12 +64,7 @@ resource "azurerm_subnet" "subnet1" {
 
 resource "azurerm_subnet_network_security_group_association" "this" {
     subnet_id = azurerm_subnet.subnet1.id
-    network_security_group_id = azurerm_network_security_group.rdp.id
-}
-
-resource "azurerm_subnet_network_security_group_association" "this" {
-    subnet_id = azurerm_subnet.subnet1.id
-    network_security_group_id = azurerm_network_security_group.ssh.id
+    network_security_group_id = azurerm_network_security_group.ssh_rdp.id
 }
 
 
