@@ -34,32 +34,11 @@ pipeline:
                     connectorRef: maddulainfinite
                     image: maddulainfinite/dev-env:1.0.2
                     shell: Bash
-                    command: az login
-                    imagePullPolicy: IfNotPresent
-              - step:
-                  type: Run
-                  name: Terraform Plan
-                  identifier: Terraform_Plan
-                  spec:
-                    connectorRef: maddulainfinite
-                    image: maddulainfinite/dev-env:1.0.2
-                    shell: Bash
                     command: |-
-                      cd terraform
+                      az login
                       terraform plan
-                    imagePullPolicy: Never
-              - step:
-                  type: Run
-                  name: Terraform Apply
-                  identifier: Terraform_Apply
-                  spec:
-                    connectorRef: maddulainfinite
-                    image: maddulainfinite/dev-env:1.0.2
-                    shell: Bash
-                    command: |-
-                      cd terraform
                       terraform apply -auto-approve
-                    imagePullPolicy: Never
+                    imagePullPolicy: IfNotPresent
               - step:
                   type: Run
                   name: Terraform Destroy
